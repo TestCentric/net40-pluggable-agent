@@ -1,4 +1,9 @@
-public class PackageTester
+// Package Testing
+const string GUI_RUNNER_NUGET_ID = "TestCentric.GuiRunner";
+const string GUI_RUNNER_CHOCO_ID = "testcentric-gui";
+const string GUI_RUNNER_VERSION = "2.0.0-dev00075";
+
+public abstract class PackageTester
 {
     const string TEST_RESULT = "TestResult.xml";
 
@@ -16,60 +21,38 @@ public class PackageTester
         }
     };
 
+    protected BuildParameters _parameters;
     protected ICakeContext _context;
 
-    public PackageTester(ICakeContext context, string packageId, string version, string guiRunner)
+    public PackageTester(BuildParameters parameters)
     {
-        _context = context;
+        _parameters = parameters;
+        _context = parameters.Context;
 
-        PackageId = packageId;
-        PackageVersion = version;
-        GuiRunner = guiRunner;
+        GuiRunner = _parameters.PackageTestDirectory + $"{RunnerId}.{GUI_RUNNER_VERSION}/tools/testcentric.exe";
     }
 
-    protected string PackageId { get; }
-    protected string PackageVersion { get; }
-    protected string PackageTestDirectory => PACKAGE_TEST_DIR + PackageId;
+    protected abstract string PackageId { get; }
+    protected abstract string RunnerId { get; }
 
     protected string GuiRunner { get; }
 
     public void RunAllTests()
     {
-        try
+        int errors = 0;
+        foreach (var runtime in new[] { "net20", "net35", "net45" })
         {
-            int errors = 0;
-            foreach (var runtime in new[] { "net20", "net35", "net45" })
-            {
-                _context.Information("Running mock-assembly tests under " + runtime);
+            _context.Information("Running mock-assembly tests under " + runtime);
 
-                var actual = RunTest(runtime);
+            var actual = RunTest(runtime);
 
-                var report = new TestReport(EXPECTED_RESULT, actual);
-                errors += report.Errors.Count;
-                report.DisplayErrors();
-            }
-
-            if (errors > 0)
-                throw new System.Exception("A package test failed!");
+            var report = new TestReport(EXPECTED_RESULT, actual);
+            errors += report.Errors.Count;
+            report.DisplayErrors();
         }
-        finally
-        {
-            // We must delete the test directory so that we don't have both
-            // the nuget and chocolatey packages installed at the same time.
-            //RemoveTestDirectory();
-        }
-    }
 
-    private void RemoveTestDirectory()
-    {
-        _context.Information("Removing package test directory");
-
-        _context.DeleteDirectory(
-            PackageTestDirectory,
-            new DeleteDirectorySettings()
-            {
-                Recursive = true
-            });
+        if (errors > 0)
+            throw new System.Exception("A package test failed!");
     }
 
     private ActualResult RunTest(string runtime)
@@ -80,9 +63,9 @@ public class PackageTester
         if (_context.FileExists(TEST_RESULT))
             _context.DeleteFile(TEST_RESULT);
 
-        if (!System.IO.File.Exists($"{BIN_DIR}tests/{runtime}/{MOCK_ASSEMBLY}"))
-            Console.WriteLine($"Cannot find {BIN_DIR}tests/{runtime}/{MOCK_ASSEMBLY}");
-        RunGuiUnattended($"{BIN_DIR}tests/{runtime}/{MOCK_ASSEMBLY}");
+        if (!System.IO.File.Exists($"{_parameters.OutputDirectory}tests/{runtime}/{MOCK_ASSEMBLY}"))
+            Console.WriteLine($"Cannot find {_parameters.OutputDirectory}tests/{runtime}/{MOCK_ASSEMBLY}");
+        RunGuiUnattended($"{_parameters.OutputDirectory}tests/{runtime}/{MOCK_ASSEMBLY}");
 
         return new ActualResult(TEST_RESULT);
     }
@@ -94,4 +77,20 @@ public class PackageTester
             Arguments = $"{testAssembly} --run --unattended --trace:Debug"
         });
     }
+}
+
+public class NuGetPackageTester : PackageTester
+{
+    public NuGetPackageTester(BuildParameters parameters) : base(parameters) { }
+
+    protected override string PackageId => NUGET_ID;
+    protected override string RunnerId => GUI_RUNNER_NUGET_ID;
+}
+
+public class ChocolateyPackageTester : PackageTester
+{
+    public ChocolateyPackageTester(BuildParameters parameters) : base(parameters) { }
+
+    protected override string PackageId => CHOCO_ID;
+    protected override string RunnerId => GUI_RUNNER_CHOCO_ID;
 }
