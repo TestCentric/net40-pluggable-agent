@@ -17,7 +17,7 @@ public abstract class PackageTester
         Skipped = 7,
         Assemblies = new AssemblyResult[]
         {
-            new AssemblyResult() { Name = MOCK_ASSEMBLY, Runtime = "net40" }
+            new AssemblyResult() { Name = MOCK_ASSEMBLY }
         }
     };
 

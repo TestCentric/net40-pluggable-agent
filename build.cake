@@ -51,7 +51,11 @@ Setup<BuildParameters>((context) =>
 Task("Clean")
 	.Does<BuildParameters>((parameters) =>
 	{
+		Information("Cleaning " + parameters.OutputDirectory);
 		CleanDirectory(parameters.OutputDirectory);
+
+		Information("Cleaning " + parameters.PackageTestDirectory);
+		CleanDirectory(parameters.PackageTestDirectory);
 	});
 
 //////////////////////////////////////////////////////////////////////
@@ -96,7 +100,9 @@ Task("NuGetRestore")
 //////////////////////////////////////////////////////////////////////
 
 Task("Build")
+	.IsDependentOn("Clean")
     .IsDependentOn("NuGetRestore")
+	//.IsDependentOn("CheckHeaders")
 	.Does<BuildParameters>((parameters) =>
 	{
 		if (IsRunningOnWindows())
