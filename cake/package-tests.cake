@@ -42,7 +42,7 @@ public abstract class PackageTester
         int errors = 0;
         foreach (var runtime in new[] { "net20", "net35", "net45" })
         {
-            _context.Information("Running mock-assembly tests under " + runtime);
+            _context.Information($"Running {runtime} mock-assembly tests");
 
             var actual = RunTest(runtime);
 
@@ -63,8 +63,6 @@ public abstract class PackageTester
         if (_context.FileExists(TEST_RESULT))
             _context.DeleteFile(TEST_RESULT);
 
-        if (!System.IO.File.Exists($"{_parameters.OutputDirectory}tests/{runtime}/{MOCK_ASSEMBLY}"))
-            Console.WriteLine($"Cannot find {_parameters.OutputDirectory}tests/{runtime}/{MOCK_ASSEMBLY}");
         RunGuiUnattended($"{_parameters.OutputDirectory}tests/{runtime}/{MOCK_ASSEMBLY}");
 
         return new ActualResult(TEST_RESULT);
