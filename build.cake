@@ -1,6 +1,6 @@
 #tool nuget:?package=GitVersion.CommandLine&version=5.0.0
 
-#load nuget:?package=TestCentric.Cake.Recipe&version=1.0.0-dev00025
+#load nuget:?package=TestCentric.Cake.Recipe&version=1.0.0-dev00026
 
 var target = Argument("target", "Default");
 
