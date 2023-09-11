@@ -1,6 +1,6 @@
 // ***********************************************************************
-// Copyright (c) Charlie Poole and TestCentric Engine contributors.
-// Licensed under the MIT License. See LICENSE.txt in root directory.
+// Copyright (c) Charlie Poole and TestCentric contributors.
+// Licensed under the MIT License. See LICENSE file in root directory.
 // ***********************************************************************
 
 using System;
@@ -17,8 +17,8 @@ namespace TestCentric.Engine.Services
         private static readonly Guid AGENTID = Guid.NewGuid();
         private const string AGENT_URL = "tcp://127.0.0.1:1234/TestAgency";
         private static readonly string REQUIRED_ARGS = $"{AGENT_URL} --pid={Process.GetCurrentProcess().Id}";
-        private const string AGENT_NAME = "net40-pluggable-agent.exe";
-        private const string AGENT_NAME_X86 = "net40-pluggable-agent-x86.exe";
+        private const string AGENT_NAME = "net40-agent.exe";
+        private const string AGENT_NAME_X86 = "net40-agent-x86.exe";
         private static string AGENT_DIR = Path.Combine(TestContext.CurrentContext.TestDirectory, "agent");
 
         // Constants used for settings

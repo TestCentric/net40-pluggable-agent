@@ -1,25 +1,34 @@
 // ***********************************************************************
-// Copyright (c) Charlie Poole and TestCentric Engine contributors.
-// Licensed under the MIT License. See LICENSE.txt in root directory.
+// Copyright (c) Charlie Poole and TestCentric contributors.
+// Licensed under the MIT License. See LICENSE file in root directory.
 // ***********************************************************************
 
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Runtime.Versioning;
 using System.Text;
 using NUnit.Engine;
 using NUnit.Engine.Extensibility;
 using TestCentric.Engine.Extensibility;
+using TestCentric.Engine.Internal;
 
 namespace TestCentric.Engine.Services
 {
     [Extension]
     public class Net40AgentLauncher : IAgentLauncher
     {
+        static ILogger log = InternalTrace.GetLogger(typeof(Net40AgentLauncher));
+
+        private const string RUNTIME_IDENTIFIER = ".NETFramework";
+        private static readonly Version RUNTIME_VERSION = new Version(4, 0);
+        private static readonly FrameworkName TARGET_FRAMEWORK = new FrameworkName(RUNTIME_IDENTIFIER, RUNTIME_VERSION);
+
         public TestAgentInfo AgentInfo => new TestAgentInfo(
             GetType().Name,
-            TestAgentType.LocalProcess);
+            TestAgentType.LocalProcess,
+            TARGET_FRAMEWORK);
 
         public bool CanCreateProcess(TestPackage package)
         {
@@ -53,7 +62,7 @@ namespace TestCentric.Engine.Services
             if (workDirectory != string.Empty)
                 sb.Append($" --work={workDirectory}");
 
-            var agentName = runAsX86 ? "net40-pluggable-agent-x86.exe" : "net40-pluggable-agent.exe";
+            var agentName = runAsX86 ? "net40-agent-x86.exe" : "net40-agent.exe";
             var agentDir = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "agent");
             var agentPath = Path.Combine(agentDir, agentName);
             var agentArgs = sb.ToString();

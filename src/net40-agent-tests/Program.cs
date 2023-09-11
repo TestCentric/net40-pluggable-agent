@@ -3,10 +3,9 @@
 // Licensed under the MIT License. See LICENSE file in root directory.
 // ***********************************************************************
 
-using System.Reflection;
 using NUnitLite;
 
-namespace TestCentric.Engine
+namespace TestCentric.agents
 {
     class Program
     {
