@@ -6,7 +6,7 @@
 		<GenerateSupportedRuntime>false</GenerateSupportedRuntime>
 	    <OutputPath>..\..\bin\$(Configuration)\</OutputPath>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-		<ApplicationIcon>..\testcentric.ico</ApplicationIcon>
+		<ApplicationIcon>..\net40-agent\testcentric.ico</ApplicationIcon>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 	    <PlatformTarget>AnyCPU</PlatformTarget>
     </PropertyGroup>
