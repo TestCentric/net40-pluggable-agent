@@ -9,17 +9,15 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.Versioning;
 using System.Text;
-using NUnit.Engine;
-using NUnit.Engine.Extensibility;
 using TestCentric.Engine.Extensibility;
-using TestCentric.Engine.Internal;
+using TestCentric.Extensibility;
 
 namespace TestCentric.Engine.Services
 {
     [Extension]
     public class Net40AgentLauncher : IAgentLauncher
     {
-        static ILogger log = InternalTrace.GetLogger(typeof(Net40AgentLauncher));
+        //static ILogger log = InternalTrace.GetLogger(typeof(Net40AgentLauncher));
 
         private const string RUNTIME_IDENTIFIER = ".NETFramework";
         private static readonly Version RUNTIME_VERSION = new Version(4, 0);
@@ -28,7 +26,7 @@ namespace TestCentric.Engine.Services
         public TestAgentInfo AgentInfo => new TestAgentInfo(
             GetType().Name,
             TestAgentType.LocalProcess,
-            TARGET_FRAMEWORK);
+            TARGET_FRAMEWORK.ToString());
 
         public bool CanCreateProcess(TestPackage package)
         {
